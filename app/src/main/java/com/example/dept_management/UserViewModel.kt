@@ -6,11 +6,13 @@ import androidx.lifecycle.ViewModel
 
 class UserViewModel : ViewModel() {
 
-    private var _Users = MutableLiveData(listOf<User>())
-    val Users:LiveData<List<User>> = _Users
+    var userRepository: MockUserRepository = MockUserRepository()
 
-    private var _Depts = MutableLiveData(listOf<Dept>())
-    val Depts:LiveData<List<Dept>> = _Depts
+    private var _users = MutableLiveData(userRepository.getUsers())
+    val users:LiveData<List<User>> = _users
+
+    private var _depts = MutableLiveData(listOf<Dept>())
+    val depts:LiveData<List<Dept>> = _depts
 
 
 }

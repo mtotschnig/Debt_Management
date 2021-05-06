@@ -6,7 +6,7 @@ data class User (
     val name: String,
     val id: UUID = UUID.randomUUID(),
     val budget: Long,
-    val depts: List<Dept>
+    val depts: List<Dept>? = null
         )
 
 data class Dept (
