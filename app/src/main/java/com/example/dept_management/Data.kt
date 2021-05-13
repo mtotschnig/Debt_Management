@@ -2,16 +2,19 @@ package com.example.dept_management
 
 import java.util.*
 
-data class User (
+data class Contact (
     val name: String,
-    val id: UUID = UUID.randomUUID(),
-    val budget: Long,
-    val depts: List<Dept>? = null
+    val id: Int,
+    val budget: Long
         )
 
 data class Dept (
-    val opened: Date,
+    val opened: String,
     val total: Long,
     val paid: Long,
-    val contact: User
+    val contact: Contact
         )
+
+fun randomDept(): Dept {
+    return Dept("01-05-2021", 100,0,Contact("Fabienne",0,1000))
+}

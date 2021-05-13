@@ -1,6 +1,7 @@
 package com.example.dept_management
 
 import android.os.Bundle
+import android.view.Gravity
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -9,15 +10,20 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.typography
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.dept_management.ui.theme.Dept_ManagementTheme
-import java.util.*
 
 class MainActivity : ComponentActivity() {
 
@@ -26,74 +32,16 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Column {
-            }
+            ActivityScreen(viewModel = userViewModel)
         }
     }
 
     @Composable
-    fun SetUsers(userViewModel: UserViewModel) {
-
-        val users: List<User> by userViewModel.users
-
-        for(user in users) {
-            Text(text = "Name: ${user.name}")
-            Text(text = "Budget: ${user.budget}")
-            Text(text = "ID: ${user.id}")
-        }
-    }
-
-}
-
-
-
-
-
-@Composable
-fun SetHeadline() {
-    Box(
-        modifier = Modifier
-            .border(width = 4.dp, color = Gray, shape = RoundedCornerShape(16.dp))
-    ) {
-        Text(
-            "Dept Summary",
-            Modifier.padding(16.dp),
-            textAlign = TextAlign.Center,
-            style = typography.h6,
+    fun ActivityScreen(viewModel: UserViewModel) {
+        Screen(
+            depts = viewModel.depts,
+            onAddDept = viewModel::addDept
         )
-
-        /*
-    Text (
-        text = "Dept Summary",
-        textAlign = TextAlign.Right,
-        modifier = Modifier.padding(36.dp)
-    )
-     */
-    }
-}
-
-
-@Composable
-fun SetDept(name: String = "Tom", paid: Long = 50, total: Long = 100){
-
-    Row (modifier = Modifier.padding(12.dp)){
-        Button(onClick = { /*TODO*/ }) {
-
-        }
-        Column(modifier = Modifier.padding(6.dp)) {
-            Text(name)
-            Text("$paid€ of $total€ paid")
-        }
     }
 
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    Dept_ManagementTheme {
-        SetHeadline()
-        SetDept()
-    }
 }
