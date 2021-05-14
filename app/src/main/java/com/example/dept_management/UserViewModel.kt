@@ -15,9 +15,13 @@ class UserViewModel : ViewModel() {
     private var _users = MutableLiveData(userRepository.getContacts())
     val users:LiveData<List<Contact>> = _users
 
-    var depts by mutableStateOf(deptRepository.getDepts())
+    var debts by mutableStateOf(deptRepository.getDepts())
 
-    fun addDept(dept: Dept) {
-        depts += dept
+    fun addDept(debt: Debt) {
+        debts += debt
+    }
+
+    fun removeDept(debt: Debt) {
+        debts = debts.toMutableList().also { it.remove(debt) }
     }
 }
