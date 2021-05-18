@@ -21,8 +21,11 @@ class MainActivity : ComponentActivity() {
     fun ActivityScreen(viewModel: UserViewModel) {
         Screen(
             debts = viewModel.debts,
-            onAddDebt = viewModel::addDept,
-            onRemoveDebt = viewModel::removeDept
+            onAddDebt = viewModel::addDebt,
+            onClose = viewModel::addIsClosed,
+            onRemoveDebt = viewModel::removeDebt,
+            addClicked = viewModel.addButtonIsClicked,
+            onAddClicked = viewModel::addIsClicked
         )
     }
 
