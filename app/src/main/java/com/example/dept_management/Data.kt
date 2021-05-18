@@ -1,5 +1,7 @@
 package com.example.dept_management
 
+import kotlin.random.Random
+
 data class Contact (
     val name: String,
     val id: Int,
@@ -7,12 +9,14 @@ data class Contact (
         )
 
 data class Debt (
-    val opened: String,
-    val total: Long,
-    val paid: Long,
-    val contact: Contact
+    val name: String,
+    val total: Long? = 100,
+    var paid: Long? = 0,
+    val id : Int = Random.nextInt()
         )
 
+/*
 fun randomDept(): Debt {
-    return Debt("01-05-2021", 100,0,Contact("Fabienne",0,1000))
+    return Debt("Max", 100,0,)
 }
+ */
