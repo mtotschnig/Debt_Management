@@ -4,10 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
@@ -24,7 +21,10 @@ import com.example.dept_management.ui.theme.Dept_ManagementTheme
 fun Screen (
     debts: List<Debt>,
     onAddDebt: (Debt) -> Unit,
-    onRemoveDebt: (Debt) -> Unit
+    onClose: () -> Unit,
+    onRemoveDebt: (Debt) -> Unit,
+    addClicked: Boolean,
+    onAddClicked: () -> Unit
 ) {
     Column(Modifier.fillMaxSize()) {
         Headline()
@@ -36,15 +36,19 @@ fun Screen (
                 Row(
                     debt = Debt,
                     modifier = Modifier.fillMaxWidth(),
-                    onItemClicked = onRemoveDebt
+                    onIconClicked = onRemoveDebt
                 )
             }
         }
-        Button(
-            onClick = { onAddDebt(randomDept()) },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "Add Debt")
+        if (addClicked) {
+            DebtForm(onAddDebt, onClose)
+        } else {
+            Button(
+                onClick = onAddClicked,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "Add Debt")
+            }
         }
     }
 }
@@ -64,43 +68,105 @@ fun Headline() {
 @Composable
 fun Row (
     debt: Debt,
-    onItemClicked: (Debt) -> Unit,
+    onIconClicked: (Debt) -> Unit,
     modifier: Modifier
 ) {
+    val (paid,setPaid) = remember {
+        mutableStateOf("")
+    }
     Row (
         modifier = modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable { onItemClicked(debt) },
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Icon(
             imageVector = Icons.Default.Done,
-            contentDescription = null
+            contentDescription = null,
+            modifier = Modifier.clickable { onIconClicked(debt) }
         )
         Debt(
             debt = debt,
-            modifier = modifier.padding(16.dp)
+            modifier = modifier
+                .padding(16.dp)
         )
     }
 }
 
 @Composable
-fun DebtFormular(
-    onAddDebt: (Debt) -> Unit
+fun DebtForm(
+    onAddDebt: (Debt) -> Unit,
+    onClose:() -> Unit
 ) {
-    val (name, setName) = remember { mutableStateOf(" ") }
+    val (name, setName) = remember { mutableStateOf("") }
+    val (paid, setPaid) = remember { mutableStateOf("") }
+    val (total, setTotal) = remember { mutableStateOf("") }
+    val submit = {
+        if(total.toLongOrNull() == null || paid.toLongOrNull() == null) {
+            //TODO Toast msg
+        } else {
+            onAddDebt(Debt(name, total.toLongOrNull(), paid.toLongOrNull()))
+        }
+    }
+    val mod = Modifier
+        .fillMaxWidth()
+        .padding(8.dp)
+
+    Column {
+        InputField (modifier = mod, value = name, onValueChange = setName, label = "Name")
+        InputField (modifier = mod, value = total, onValueChange = setTotal, label = "Total Debt")
+        InputField (modifier = mod, value = paid, onValueChange = setPaid, label = "Paid Debt")
+        Row(
+           horizontalArrangement = Arrangement.SpaceEvenly,
+           modifier = Modifier
+               .fillMaxWidth(1f)
+        ) {
+           Button(
+               modifier = Modifier
+                   .fillMaxWidth()
+                   .weight(1f),
+               onClick = submit
+           ) {
+               Text(text = "Add")
+           }
+           Button(
+               modifier = Modifier
+                   .fillMaxWidth()
+                   .weight(1f),
+               onClick = onClose
+           ) {
+               Text(text = "Close")
+           }
+       }
+    }
 }
+
+@Composable
+fun InputField(
+    modifier: Modifier,
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String
+) {
+    TextField(
+        modifier = modifier,
+        value = value,
+        onValueChange = onValueChange,
+        maxLines = 1,
+        label = { Text(text = label)}
+    )
+
+}
+
 
 @Composable
 fun Debt(
     debt: Debt,
     modifier: Modifier
 ) {
-    Column(
-        modifier = modifier
-    ) {
-        Text(text = "Total Amount paid ${debt.paid}€ of ${debt.total} from  ${debt.contact.name}")
-    }
+        Text(
+            text = "Total Amount paid ${debt.paid}€ of ${debt.total} from ${debt.name}",
+            modifier = modifier
+        )
 }
 
 
