@@ -1,5 +1,7 @@
 package com.example.dept_management
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,10 +12,14 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.dept_management.ui.theme.Dept_ManagementTheme
 
 
@@ -27,7 +33,8 @@ fun Screen (
     onAddClicked: () -> Unit,
     currentlyEditing: Debt?,
     onEditDebt: (Debt) -> Unit,
-    onEditDone: () -> Unit
+    onStartEdit: (Debt) -> Unit,
+    onEditClose: () -> Unit
 ) {
     Column(Modifier.fillMaxSize()) {
         Headline()
@@ -36,21 +43,33 @@ fun Screen (
             contentPadding = PaddingValues(top = 8.dp)
         ) {
             items(items = debts) { Debt ->
-                Row(
-                    debt = Debt,
-                    modifier = Modifier.fillMaxWidth(),
-                    onIconClicked = onRemoveDebt
-                )
+                if(currentlyEditing?.id == Debt.id) {
+                    EditField(
+                        debt = Debt,
+                        onAddEdit = onEditDebt,
+                        onEditClose = onEditClose
+                    )
+                } else {
+                    Row(
+                        debt = Debt,
+                        modifier = Modifier.fillMaxWidth(),
+                        onIconClicked = onRemoveDebt,
+                        onDebtClicked = onStartEdit
+                    )
+                }
             }
         }
         if (addClicked) {
             DebtForm(onAddDebt, onClose)
         } else {
-            Button(
+            
+            FloatingActionButton(
                 onClick = onAddClicked,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(16.dp)
             ) {
-                Text(text = "Add Debt")
+                Text(text = "+")
             }
         }
     }
@@ -72,11 +91,9 @@ fun Headline() {
 fun Row (
     debt: Debt,
     onIconClicked: (Debt) -> Unit,
+    onDebtClicked: (Debt) -> Unit,
     modifier: Modifier
 ) {
-    val (paid,setPaid) = remember {
-        mutableStateOf("")
-    }
     Row (
         modifier = modifier
             .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -91,6 +108,7 @@ fun Row (
             debt = debt,
             modifier = modifier
                 .padding(16.dp)
+                .clickable { onDebtClicked(debt) }
         )
     }
 }
@@ -115,25 +133,23 @@ fun DebtForm(
         .padding(8.dp)
 
     Column {
-        InputField (modifier = mod, value = name, onValueChange = setName, label = "Name")
-        InputField (modifier = mod, value = total, onValueChange = setTotal, label = "Total Debt")
-        InputField (modifier = mod, value = paid, onValueChange = setPaid, label = "Paid Debt")
+        TextField(modifier = mod,value = name, onValueChange = setName, label = {Text("Name")})
+        TextField (modifier = mod, value = total, onValueChange = setTotal, label = {Text("Total Debt")})
+        TextField (modifier = mod, value = paid, onValueChange = setPaid, label = {Text("Paid Debt")})
         Row(
            horizontalArrangement = Arrangement.SpaceEvenly,
            modifier = Modifier
                .fillMaxWidth(1f)
         ) {
            Button(
-               modifier = Modifier
-                   .fillMaxWidth()
+               modifier = mod
                    .weight(1f),
                onClick = submit
            ) {
                Text(text = "Add")
            }
            Button(
-               modifier = Modifier
-                   .fillMaxWidth()
+               modifier = mod
                    .weight(1f),
                onClick = onClose
            ) {
@@ -144,20 +160,63 @@ fun DebtForm(
 }
 
 @Composable
-fun InputField(
-    modifier: Modifier,
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String
+fun EditField(
+    debt: Debt,
+    onAddEdit: (Debt) -> Unit,
+    onEditClose: () -> Unit
 ) {
-    TextField(
-        modifier = modifier,
-        value = value,
-        onValueChange = onValueChange,
-        maxLines = 1,
-        label = { Text(text = label)}
-    )
-
+    val mod = Modifier
+        .fillMaxWidth()
+        .padding(4.dp)
+    val (newPaid, setPaid) = remember { mutableStateOf("") }
+    val (newTotal, setTotal) = remember { mutableStateOf("") }
+    val submit = {
+        if(newPaid.toLongOrNull() == null || newTotal.toLongOrNull() == null) {
+            //TODO Toast msg
+        } else {
+            onAddEdit(debt.copy(total = newTotal.toLong() ,paid = newPaid.toLong()))
+        }
+    }
+    Box(
+        modifier = Modifier
+            .background(Color.LightGray)
+            .border(1.dp, Color.Gray)
+    ) {
+        Column(modifier = mod) {
+            Text(
+                text = "Name: ${debt.name}",
+                modifier = mod,
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp
+            )
+            OutlinedTextField(
+                value = newTotal,
+                onValueChange = setTotal,
+                label = { Text(text = "New Total (${debt.total})")},
+                modifier = mod
+            )
+            OutlinedTextField(
+                value = newPaid,
+                onValueChange = setPaid,
+                label = { Text(text = "New Paid (${debt.paid})") },
+                modifier = mod
+            )
+            Row(modifier = mod) {
+                Button(
+                    onClick = submit,
+                    modifier = mod.weight(1f)
+                ) {
+                    Text(text = "Save Edit")
+                }
+                Button(
+                    onClick = onEditClose,
+                    modifier = mod.weight(1f)
+                ) {
+                    Text(text = "Close")
+                }
+            }
+        }
+    }
 }
 
 
