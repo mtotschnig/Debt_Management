@@ -52,9 +52,10 @@ class UserViewModel : ViewModel() {
         debts = debts.toMutableList().also {
             it[currentEditPosition] = debt
         }
+        currentEditPosition = -1
     }
 
-    fun onEditDone () {
+    fun onEditClose () {
         currentEditPosition = -1
     }
 }

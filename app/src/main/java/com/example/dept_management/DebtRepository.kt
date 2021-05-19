@@ -7,7 +7,9 @@ interface DebtRepository {
 
 class MockDebtRepository : DebtRepository {
 
-    private var debts: List<Debt> = listOf()
+    private var debts: List<Debt> = listOf(
+        Debt("Test",100,0)
+    )
 
     override fun getDebts(): List<Debt> {
         return debts

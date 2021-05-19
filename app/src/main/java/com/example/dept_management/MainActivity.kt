@@ -28,7 +28,8 @@ class MainActivity : ComponentActivity() {
             onAddClicked = viewModel::addIsClicked,
             currentlyEditing = viewModel.currentEditDebt,
             onEditDebt = viewModel::onEditDebt,
-            onEditDone = viewModel::onEditDone
+            onStartEdit = viewModel::onDebtSelected,
+            onEditClose = viewModel::onEditClose
         )
     }
 
