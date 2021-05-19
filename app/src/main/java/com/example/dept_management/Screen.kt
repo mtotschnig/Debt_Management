@@ -24,7 +24,10 @@ fun Screen (
     onClose: () -> Unit,
     onRemoveDebt: (Debt) -> Unit,
     addClicked: Boolean,
-    onAddClicked: () -> Unit
+    onAddClicked: () -> Unit,
+    currentlyEditing: Debt?,
+    onEditDebt: (Debt) -> Unit,
+    onEditDone: () -> Unit
 ) {
     Column(Modifier.fillMaxSize()) {
         Headline()

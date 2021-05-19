@@ -16,8 +16,12 @@ class UserViewModel : ViewModel() {
      */
 
     var debts by mutableStateOf(debtRepository.getDebts())
+
     var addButtonIsClicked by mutableStateOf(false)
-    var editButtonIsClicked by mutableStateOf(false)
+
+    var currentEditPosition by mutableStateOf(-1)
+    val currentEditDebt: Debt?
+        get() = debts.getOrNull(currentEditPosition)
 
     fun addDebt(debt: Debt) {
         debts += debt
@@ -28,12 +32,29 @@ class UserViewModel : ViewModel() {
         debts = debts.toMutableList().also { it.remove(debt) }
     }
 
-
     fun addIsClicked() {
         addButtonIsClicked = true
     }
 
     fun addIsClosed() {
         addButtonIsClicked = false
+    }
+
+    fun onDebtSelected (debt: Debt) {
+        currentEditPosition = debts.indexOf(debt)
+    }
+
+    fun onEditDebt(debt: Debt) {
+        val currentDebt = requireNotNull(currentEditDebt)
+        require(currentDebt.id == debt.id) {
+            "ID Error"
+        }
+        debts = debts.toMutableList().also {
+            it[currentEditPosition] = debt
+        }
+    }
+
+    fun onEditDone () {
+        currentEditPosition = -1
     }
 }

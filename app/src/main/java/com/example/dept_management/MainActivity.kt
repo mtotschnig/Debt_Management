@@ -25,7 +25,10 @@ class MainActivity : ComponentActivity() {
             onClose = viewModel::addIsClosed,
             onRemoveDebt = viewModel::removeDebt,
             addClicked = viewModel.addButtonIsClicked,
-            onAddClicked = viewModel::addIsClicked
+            onAddClicked = viewModel::addIsClicked,
+            currentlyEditing = viewModel.currentEditDebt,
+            onEditDebt = viewModel::onEditDebt,
+            onEditDone = viewModel::onEditDone
         )
     }
 
