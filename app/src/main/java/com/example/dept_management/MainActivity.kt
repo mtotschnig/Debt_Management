@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 
 class MainActivity : ComponentActivity() {
 
@@ -12,6 +14,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             ActivityScreen(viewModel = userViewModel)
         }
@@ -19,9 +22,11 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun ActivityScreen(viewModel: UserViewModel) {
-        viewModel.debts.value?.let {
+
+        val debts: List<Debt> by viewModel.debts.observeAsState(listOf())
+
             Screen(
-                debts = it,
+                debts = debts,
                 onAddDebt = viewModel::addDebt,
                 onClose = viewModel::addIsClosed,
                 onRemoveDebt = viewModel::removeDebt,
@@ -34,5 +39,3 @@ class MainActivity : ComponentActivity() {
             )
         }
     }
-
-}
