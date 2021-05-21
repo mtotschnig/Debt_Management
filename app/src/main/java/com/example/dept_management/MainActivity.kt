@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 
 class MainActivity : ComponentActivity() {
 
@@ -19,20 +21,16 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun ActivityScreen(viewModel: UserViewModel) {
-        viewModel.debts.value?.let {
-            Screen(
-                debts = it,
-                onAddDebt = viewModel::addDebt,
-                onClose = viewModel::addIsClosed,
-                onRemoveDebt = viewModel::removeDebt,
-                addClicked = viewModel.addButtonIsClicked,
-                onAddClicked = viewModel::addIsClicked,
-                currentlyEditing = viewModel.currentEditDebt,
-                onEditDebt = viewModel::onEditDebt,
-                onStartEdit = viewModel::onDebtSelected,
-                onEditClose = viewModel::onEditClose
-            )
-        }
+        val debts: List<Debt> by viewModel.debts.observeAsState(emptyList())
+        Screen(
+            debts = debts,
+            onAddDebt = viewModel::addDebt,
+            onRemoveDebt = viewModel::removeDebt,
+            currentlyEditing = viewModel.currentEditDebt,
+            onEditDebt = viewModel::onEditDebt,
+            onStartEdit = viewModel::onDebtSelected,
+            onEditClose = viewModel::onEditClose
+        )
     }
 
 }

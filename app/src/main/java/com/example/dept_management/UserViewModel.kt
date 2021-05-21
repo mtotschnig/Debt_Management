@@ -1,10 +1,6 @@
 package com.example.dept_management
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class UserViewModel : ViewModel() {
@@ -17,9 +13,7 @@ class UserViewModel : ViewModel() {
     val users:LiveData<List<Contact>> = _users
      */
 
-    var debts: LiveData<List<Debt>> = debtRepository.getDebts()
-
-    var addButtonIsClicked by mutableStateOf(false)
+    val debts: LiveData<List<Debt>> = debtRepository.getDebts()
 
     var currentEditPosition = -1
     val currentEditDebt: Debt?
@@ -27,19 +21,10 @@ class UserViewModel : ViewModel() {
 
     fun addDebt(debt: Debt) {
         debtRepository.addDebt(debt)
-        addButtonIsClicked = false
     }
 
     fun removeDebt(debt: Debt) {
         debtRepository.removeDebt(debt)
-    }
-
-    fun addIsClicked() {
-        addButtonIsClicked = true
-    }
-
-    fun addIsClosed() {
-        addButtonIsClicked = false
     }
 
     fun onDebtSelected (debt: Debt) {
