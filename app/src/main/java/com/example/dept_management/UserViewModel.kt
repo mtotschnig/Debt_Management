@@ -5,17 +5,12 @@ import androidx.lifecycle.ViewModel
 
 class UserViewModel : ViewModel() {
 
-    // var userRepository: MockUserRepository = MockUserRepository()
     var debtRepository: DebtRepository = MockDebtRepository()
-
-    /*
-    private var _users = MutableLiveData(userRepository.getContacts())
-    val users:LiveData<List<Contact>> = _users
-     */
 
     val debts: LiveData<List<Debt>> = debtRepository.getDebts()
 
     var currentEditPosition = -1
+
     val currentEditDebt: Debt?
         get() = debtRepository.getDebt(currentEditPosition)
 
