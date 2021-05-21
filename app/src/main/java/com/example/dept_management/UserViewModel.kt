@@ -3,33 +3,35 @@ package com.example.dept_management
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class UserViewModel : ViewModel() {
 
     // var userRepository: MockUserRepository = MockUserRepository()
-    var debtRepository: MockDebtRepository = MockDebtRepository()
+    var debtRepository: DebtRepository = MockDebtRepository()
 
     /*
     private var _users = MutableLiveData(userRepository.getContacts())
     val users:LiveData<List<Contact>> = _users
      */
 
-    var debts by mutableStateOf(debtRepository.getDebts())
+    var debts: LiveData<List<Debt>> = debtRepository.getDebts()
 
     var addButtonIsClicked by mutableStateOf(false)
 
-    var currentEditPosition by mutableStateOf(-1)
+    var currentEditPosition = -1
     val currentEditDebt: Debt?
-        get() = debts.getOrNull(currentEditPosition)
+        get() = debtRepository.getDebt(currentEditPosition)
 
     fun addDebt(debt: Debt) {
-        debts += debt
+        debtRepository.addDebt(debt)
         addButtonIsClicked = false
     }
 
     fun removeDebt(debt: Debt) {
-        debts = debts.toMutableList().also { it.remove(debt) }
+        debtRepository.removeDebt(debt)
     }
 
     fun addIsClicked() {
@@ -41,17 +43,11 @@ class UserViewModel : ViewModel() {
     }
 
     fun onDebtSelected (debt: Debt) {
-        currentEditPosition = debts.indexOf(debt)
+        currentEditPosition = debtRepository.getIndex(debt)!!
     }
 
     fun onEditDebt(debt: Debt) {
-        val currentDebt = requireNotNull(currentEditDebt)
-        require(currentDebt.id == debt.id) {
-            "ID Error"
-        }
-        debts = debts.toMutableList().also {
-            it[currentEditPosition] = debt
-        }
+        debtRepository.editDebt(debt,currentEditPosition)
         currentEditPosition = -1
     }
 

@@ -19,18 +19,20 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun ActivityScreen(viewModel: UserViewModel) {
-        Screen(
-            debts = viewModel.debts,
-            onAddDebt = viewModel::addDebt,
-            onClose = viewModel::addIsClosed,
-            onRemoveDebt = viewModel::removeDebt,
-            addClicked = viewModel.addButtonIsClicked,
-            onAddClicked = viewModel::addIsClicked,
-            currentlyEditing = viewModel.currentEditDebt,
-            onEditDebt = viewModel::onEditDebt,
-            onStartEdit = viewModel::onDebtSelected,
-            onEditClose = viewModel::onEditClose
-        )
+        viewModel.debts.value?.let {
+            Screen(
+                debts = it,
+                onAddDebt = viewModel::addDebt,
+                onClose = viewModel::addIsClosed,
+                onRemoveDebt = viewModel::removeDebt,
+                addClicked = viewModel.addButtonIsClicked,
+                onAddClicked = viewModel::addIsClicked,
+                currentlyEditing = viewModel.currentEditDebt,
+                onEditDebt = viewModel::onEditDebt,
+                onStartEdit = viewModel::onDebtSelected,
+                onEditClose = viewModel::onEditClose
+            )
+        }
     }
 
 }
